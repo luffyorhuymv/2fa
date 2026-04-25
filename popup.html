@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=400">
+  <title>2FA Authenticator</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <img src="icons/logo.png" alt="Logo" width="24" height="24">
+        <span>2FA Authenticator</span>
+      </div>
+      <div class="header-actions">
+        <button id="scanBtn" class="btn-icon" title="Quét QR Code">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 7V5a2 2 0 0 1 2-2h2" />
+            <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+            <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
+            <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+            <rect x="7" y="7" width="10" height="10" rx="1" />
+          </svg>
+        </button>
+        <button id="addBtn" class="btn-icon" title="Thêm tài khoản">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+        </button>
+        <button id="syncBtn" class="btn-icon" title="Sync với Cloud">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path
+              d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.66 0 3-4.03 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4.03-3-9s1.34-9 3-9" />
+          </svg>
+        </button>
+        <button id="settingsBtn" class="btn-icon" title="Cài đặt">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3" />
+            <path
+              d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Search Bar -->
+    <div class="search-container">
+      <div class="search-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input type="text" id="searchInput" placeholder="Tìm kiếm tài khoản...">
+        <button id="clearSearchBtn" class="clear-search hidden" title="Xóa tìm kiếm">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Service Filter Chips (auto-generated) -->
+    <div id="serviceFilter" class="service-filter hidden"></div>
+
+    <!-- QR Scanner Form (Hidden by default) -->
+    <div id="scanForm" class="add-form hidden">
+      <h3>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          style="vertical-align: middle; margin-right: 6px;">
+          <path d="M3 7V5a2 2 0 0 1 2-2h2" />
+          <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+          <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
+          <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+        </svg>
+        Quét QR Code
+      </h3>
+
+
+      <!-- Scan from Screen Button -->
+      <div class="scan-screen-section">
+        <button id="scanScreenBtn" class="btn btn-scan-screen">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+            <line x1="8" y1="21" x2="16" y2="21" />
+            <line x1="12" y1="17" x2="12" y2="21" />
+          </svg>
+          Quét toàn màn hình
+        </button>
+        <button id="snipScanBtn" class="btn btn-snip">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 2L3 6V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V6L18 2H6Z" />
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <path d="M16 10C16 12.21 14.21 14 12 14C9.79 14 8 12.21 8 10" />
+          </svg>
+          Chọn vùng quét
+        </button>
+        <p class="scan-hint">Quét QR code hiện trên trang web</p>
+      </div>
+
+
+      <div class="divider">
+        <span>hoặc</span>
+      </div>
+
+      <!-- Scan Camera Button -->
+      <div class="scan-camera-section">
+        <button id="scanCameraBtn" class="btn btn-scan-camera">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+            <circle cx="12" cy="13" r="4" />
+          </svg>
+          Bật Camera
+        </button>
+      </div>
+
+      <div id="cameraContainer" class="camera-container hidden">
+        <video id="cameraVideo" playsinline></video>
+        <div class="camera-overlay">
+          <div class="scan-area"></div>
+        </div>
+        <button id="stopCameraBtn" class="btn-icon camera-close" title="Tắt Camera">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="divider">
+        <span>hoặc tải ảnh</span>
+      </div>
+
+      <!-- File Upload -->
+      <div class="form-group">
+        <div class="file-upload">
+          <input type="file" id="qrFileInput" accept="image/*" hidden>
+          <button id="uploadBtn" class="btn btn-upload">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
+            Chọn ảnh
+          </button>
+          <span id="fileName" class="file-name">Chưa chọn file</span>
+        </div>
+      </div>
+
+      <div class="divider">
+        <span>hoặc nhập URL</span>
+      </div>
+
+      <!-- URL Input -->
+      <div class="form-group">
+        <input type="url" id="qrUrl" placeholder="https://example.com/qr-code.png">
+      </div>
+
+      <!-- Scan Result Preview -->
+      <div id="scanPreview" class="scan-preview hidden">
+        <div class="preview-header">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+          <span>Đã tìm thấy</span>
+        </div>
+        <div class="preview-content">
+          <div class="preview-name" id="previewName">-</div>
+          <div class="preview-secret" id="previewSecret">-</div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button id="cancelScanBtn" class="btn btn-secondary">Hủy</button>
+        <button id="scanNowBtn" class="btn btn-primary">Quét</button>
+        <button id="addScannedBtn" class="btn btn-success hidden">Thêm tài khoản</button>
+      </div>
+    </div>
+
+    <!-- Add Account Form (Hidden by default) -->
+    <div id="addForm" class="add-form hidden">
+      <h3>Thêm tài khoản mới</h3>
+      <div class="form-group">
+        <label for="serviceName">Tên dịch vụ</label>
+        <input type="text" id="serviceName" placeholder="VD: Google, Facebook...">
+      </div>
+      <div class="form-group">
+        <label for="secretKey">Secret Key</label>
+        <input type="text" id="secretKey" placeholder="Nhập secret key (Base32)">
+      </div>
+      <div class="form-group">
+        <label for="accountCategory">Phân loại</label>
+        <select id="accountCategory">
+          <option value="google">🔍 Google</option>
+          <option value="microsoft">⊞ Microsoft</option>
+          <option value="finance">💰 Tài chính</option>
+          <option value="social">💬 Mạng xã hội</option>
+          <option value="work">💼 Công việc</option>
+          <option value="game">🎮 Game</option>
+          <option value="other">📌 Khác</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button id="cancelBtn" class="btn btn-secondary">Hủy</button>
+        <button id="saveBtn" class="btn btn-primary">Lưu</button>
+      </div>
+    </div>
+
+    <!-- Accounts List -->
+    <div id="accountsList" class="accounts-list">
+      <!-- Accounts will be rendered here -->
+    </div>
+
+    <!-- Pagination Controls -->
+    <div id="paginationControls" class="pagination-controls hidden">
+      <button id="prevPageBtn" class="btn-page" disabled>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6" />
+        </svg>
+      </button>
+      <span id="pageInfo" class="page-info">Trang 1 / 1</span>
+      <button id="nextPageBtn" class="btn-page">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="empty-state hidden">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+      </svg>
+      <p>Chưa có tài khoản nào</p>
+      <button id="addFirstBtn" class="btn btn-primary">Thêm tài khoản đầu tiên</button>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="settingsModal" class="modal hidden">
+    <div class="modal-content">
+      <h3>⚙️ Cài đặt Sync</h3>
+      <div class="form-group">
+        <label for="apiUrl">Google Apps Script URL</label>
+        <input type="url" id="apiUrl" placeholder="https://script.google.com/macros/s/.../exec">
+      </div>
+      <div class="form-group">
+        <label for="masterPassword">Master Password</label>
+        <input type="password" id="masterPassword" placeholder="Mật khẩu mã hóa dữ liệu">
+      </div>
+
+      <div class="divider"><span>Backup</span></div>
+
+      <div class="backup-actions">
+        <button id="exportBtn" class="btn btn-backup">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          Export
+        </button>
+        <button id="importBtn" class="btn btn-backup">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+          Import
+        </button>
+        <input type="file" id="importFileInput" accept=".json" hidden>
+      </div>
+
+      <div class="form-actions">
+        <button id="closeSettingsBtn" class="btn btn-secondary">Đóng</button>
+        <button id="saveSettingsBtn" class="btn btn-primary">Lưu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Account Modal -->
+  <div id="editModal" class="modal hidden">
+    <div class="modal-content">
+      <h3>✏️ Chỉnh sửa tài khoản</h3>
+      <div class="form-group">
+        <label for="editName">Tên dịch vụ</label>
+        <input type="text" id="editName" placeholder="Tên dịch vụ">
+      </div>
+      <div class="form-group">
+        <label for="editEmail">Email/Tài khoản</label>
+        <input type="text" id="editEmail" placeholder="Email hoặc username">
+      </div>
+      <div class="form-group">
+        <label for="editCategory">Phân loại</label>
+        <select id="editCategory">
+          <option value="google">🔍 Google</option>
+          <option value="microsoft">⊞ Microsoft</option>
+          <option value="finance">💰 Tài chính</option>
+          <option value="social">💬 Mạng xã hội</option>
+          <option value="work">💼 Công việc</option>
+          <option value="game">🎮 Game</option>
+          <option value="other">📌 Khác</option>
+        </select>
+      </div>
+      <input type="hidden" id="editAccountId">
+      <div class="form-actions">
+        <button id="cancelEditBtn" class="btn btn-secondary">Hủy</button>
+        <button id="saveEditBtn" class="btn btn-primary">Lưu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sync Modal -->
+  <div id="syncModal" class="modal hidden">
+    <div class="modal-content">
+      <h3>☁️ Sync Cloud</h3>
+      <div class="form-group">
+        <label for="syncPassword">Master Password</label>
+        <input type="password" id="syncPassword" placeholder="Nhập mật khẩu để mã hóa">
+      </div>
+      <div id="syncStatus" class="sync-status"></div>
+      <div class="sync-actions">
+        <button id="downloadBtn" class="btn btn-sync">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          Tải xuống
+        </button>
+        <button id="syncUploadBtn" class="btn btn-sync">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+          Tải lên
+        </button>
+      </div>
+      <div class="form-actions">
+        <button id="closeSyncBtn" class="btn btn-secondary">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Modal -->
+  <div id="confirmModal" class="modal hidden">
+    <div class="modal-content confirm-content">
+      <div class="confirm-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+      </div>
+      <h3 id="confirmTitle">Xác nhận</h3>
+      <p id="confirmMessage" class="confirm-message">Bạn có chắc chắn muốn thực hiện hành động này?</p>
+      <div class="form-actions">
+        <button id="confirmCancelBtn" class="btn btn-secondary">Hủy</button>
+        <button id="confirmOkBtn" class="btn btn-danger">Xóa</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="lib/jsQR.min.js"></script>
+  <script src="lib/crypto.js"></script>
+  <script src="qr-scanner.js"></script>
+  <script src="popup.js"></script>
+</body>
+
+</html>

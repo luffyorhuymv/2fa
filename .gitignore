@@ -1,0 +1,23 @@
+# Windsurf / agent tooling
+.agent/
+.windsurf/
+
+# OS / editor
+Thumbs.db
+.DS_Store
+desktop.ini
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Node (nếu có sau này)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Env / secrets
+.env
+.env.*
+!.env.example
